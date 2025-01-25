@@ -381,8 +381,6 @@ function Atualizar-Script {
 function Check-InvokeExpression {
     if ($env:FROM_WEB -eq "true") {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
-        Write-Host "Pressione qualquer tecla para continuar..." -ForegroundColor Yellow
-        [System.Console]::ReadKey($true) | Out-Null
         return $true
     }
     return $false
@@ -436,7 +434,7 @@ function Menu {
         '1' { Configurar-Contas }
         '2' { Adicionar-Ao-Dominio }
         '3' { Remover-Do-Dominio }
-        '4' { if (-not $disableUpdateCheck) { Atualizar-Script } else { Menu } }
+        '4' { if (-not $disableUpdateCheck) { Atualizar-Script } else { Clear-Host; Write-Host "Opção desativada." -ForegroundColor Red; Start-Sleep -Seconds 1; Menu } }
         '5' { Write-Host "Saindo..." -ForegroundColor Yellow; Exit }
         default { Write-Host "Opção inválida. Tente novamente." -ForegroundColor Red; Start-Sleep -Seconds 1; Menu }
     }
