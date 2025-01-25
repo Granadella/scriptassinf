@@ -405,10 +405,10 @@ function Check-InvokeExpression {
 function Menu {
     Clear-Host
     Write-Host "==============================="
-    Write-Host "             PPDF              " -BackgroundColor DarkGray
-    Write-Host "      FORTIS BRACHIUM LEGIS    " -ForegroundColor Yellow
+    Write-Host "             PPDF              " -BackgroundColor Black -ForegroundColor DarkGray
+    Write-Host "      FORTIS BRACHIUM LEGIS    " -BackgroundColor Black -ForegroundColor Yellow
     Write-Host "==============================="
-    Write-Host "          CIR - ASSINF         "
+    Write-Host "          CIR - ASSINF         " -BackgroundColor DarkBlue
     Write-Host "                               "
     Write-Host "         MENU PRINCIPAL        "
     Write-Host "==============================="
