@@ -410,7 +410,7 @@ function Menu {
     Write-Host "==============================="
     Write-Host "          CIR - ASSINF         " -BackgroundColor DarkBlue
     Write-Host "                               "
-    Write-Host "         MENU PRINCIPAL        "
+    Write-Host "         MENU PRINCIPAL        " -ForegroundColor Yellow
     Write-Host "==============================="
     Write-Host ""
     
