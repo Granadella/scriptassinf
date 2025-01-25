@@ -1,6 +1,3 @@
-# Script para configurações de sistema e domínio
-# Data: 25-01-2025
-# Definir a codificação do console para UTF-8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Função para obter o Domínio/Grupo de Trabalho
