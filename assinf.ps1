@@ -381,12 +381,14 @@ function Atualizar-Script {
 # Função para verificar se o script foi chamado via irm e iex
 function Check-InvokeExpression {
     Write-Host "Verificando se o script foi chamado via irm e iex..." -ForegroundColor Cyan
-    $parentProcess = Get-CimInstance -ClassName Win32_Process -Filter "ProcessId=$PID"
-    $parentCommandLine = $parentProcess.CommandLine
+    
+    # Obter a linha de comando do processo atual
+    $currentProcess = Get-CimInstance -ClassName Win32_Process -Filter "ProcessId=$PID"
+    $currentCommandLine = $currentProcess.CommandLine
 
-    Write-Host "Linha de comando do processo pai: $parentCommandLine" -ForegroundColor Cyan
+    Write-Host "Linha de comando do processo atual: $currentCommandLine" -ForegroundColor Cyan
 
-    if ($parentCommandLine -match "irm") {
+    if ($currentCommandLine -match "irm" -and $currentCommandLine -match "iex") {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
         Write-Host "Pressione qualquer tecla para continuar..." -ForegroundColor Yellow
         [System.Console]::ReadKey($true) | Out-Null
