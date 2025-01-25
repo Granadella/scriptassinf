@@ -403,7 +403,9 @@ function Check-InvokeExpression {
         return $true
     }
 
-    return $false
+   if ($MyInvocation.Line -eq $null) {
+        return $false
+    }
 }
 
 # Menu principal
