@@ -1,4 +1,3 @@
-# Script ASSINF
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Função para obter o Domínio/Grupo de Trabalho
