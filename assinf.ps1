@@ -339,9 +339,12 @@ function Atualizar-Script {
         $TempFile = "$env:TEMP\script_atualizado.ps1"
         Invoke-WebRequest -Uri $ScriptUrl -OutFile $TempFile -UseBasicParsing -ErrorAction Stop
 
-        # Reescrever o arquivo com a codificação UTF-8 com BOM
-        $content = Get-Content -Path $TempFile -Raw
-        [System.IO.File]::WriteAllText($TempFile, $content, [System.Text.Encoding]::UTF8)
+        # Ler o conteúdo do arquivo baixado com a codificação correta
+        $content = Get-Content -Path $TempFile -Raw -Encoding UTF8
+
+        # Reescrever o conteúdo com a codificação UTF-8 com BOM
+        $utf8BomEncoding = New-Object System.Text.UTF8Encoding($true)
+        [System.IO.File]::WriteAllText($ScriptLocal, $content, $utf8BomEncoding)
 
         # Comparar o hash (opcional para verificar diferenças)
         $CurrentHash = Get-FileHash -Path $ScriptLocal -Algorithm SHA256
