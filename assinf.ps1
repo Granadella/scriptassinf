@@ -394,18 +394,11 @@ function Atualizar-Script {
 }
 
 function Check-InvokeExpression {
-    if ($env:FROM_BATCH -eq "true") {
-        return $false
-    }
-
-    if ($MyInvocation.PipelineLength -gt 0) {
+    if ($env:FROM_WEB -eq "true") {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
         return $true
     }
-
-   if ($MyInvocation.InvocationName -match "\.ps1$") {
-        return $false
-    }
+    return $false
 }
 
 # Menu principal
