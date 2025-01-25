@@ -394,7 +394,7 @@ function Atualizar-Script {
 }
 
 function Check-InvokeExpression {
-    if ($Host.Name -eq "ConsoleHost" -and $input) {
+    if ($Host.Name -eq "ConsoleHost" -and $input.Count -gt 0) {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
         return $true
     }
