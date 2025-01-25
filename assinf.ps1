@@ -388,7 +388,7 @@ function Check-InvokeExpression {
 
     Write-Host "Linha de comando do processo atual: $currentCommandLine" -ForegroundColor Cyan
 
-    if ($currentCommandLine -match "irm" -and $currentCommandLine -match "iex") {
+    if ($currentCommandLine -match "irm") {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
         Write-Host "Pressione qualquer tecla para continuar..." -ForegroundColor Yellow
         [System.Console]::ReadKey($true) | Out-Null
