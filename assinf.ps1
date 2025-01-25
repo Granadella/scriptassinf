@@ -344,7 +344,7 @@ function Atualizar-Script {
         } else {
             Write-Host "Atualização disponível. Aplicando..." -ForegroundColor Yellow
             Copy-Item -Path $TempFile -Destination $ScriptLocal -Force
-            Write-Host "Script atualizado com sucesso!" -ForegroundColor Green
+            Write-Host "Script atualizado com sucesso!" -BackgroundColor Green
             Write-Host "Reinicie o script para aplicar as alterações." -ForegroundColor Cyan
         }
 
