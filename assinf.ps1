@@ -394,7 +394,7 @@ function Atualizar-Script {
 }
 
 function Check-InvokeExpression {
-    if ($env:FROM_WEB -eq "true") {
+    if ($env:IRMIEX -eq "true") {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
         return $true
     }
