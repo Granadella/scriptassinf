@@ -394,7 +394,7 @@ function Atualizar-Script {
 }
 
 function Check-InvokeExpression {
-    if ($ExecutionContext.SessionState.PSCommandPath -match "iex|Invoke-RestMethod") {
+    if ($MyInvocation.InvocationName -eq "iex" -or $MyInvocation.InvocationName -eq "Invoke-RestMethod") {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
         return $true
     }
