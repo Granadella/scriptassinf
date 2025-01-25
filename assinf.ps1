@@ -133,7 +133,7 @@ function Adicionar-Ao-Dominio {
         } while ($UserChoice -ne 'S')
 
         # Definir o nome do domínio
-        $Domain = "tstdomain.br"
+        $Domain = "ppdf.df.gov.br"
 
         # Loop para solicitar login e senha até que sejam corretos
         do {
@@ -238,7 +238,7 @@ function Remover-Do-Dominio {
         }
 
         # Definir o nome do domínio
-        $Domain = "tstdomain.br"
+        $Domain = "ppdf.df.gov.br"
 
         # Loop para solicitar login e senha até que sejam corretos
         do {
