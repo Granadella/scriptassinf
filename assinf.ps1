@@ -378,6 +378,20 @@ function Atualizar-Script {
     }
 }
 
+# Função para verificar se o script foi chamado via irm e iex
+function Check-InvokeExpression {
+    $parentProcess = Get-CimInstance -ClassName Win32_Process -Filter "ProcessId=$PID"
+    $parentCommandLine = $parentProcess.CommandLine
+
+    if ($parentCommandLine -match "iex") {
+        Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
+        Write-Host "Pressione qualquer tecla para continuar..." -ForegroundColor Yellow
+        [System.Console]::ReadKey($true) | Out-Null
+        return $true
+    }
+    return $false
+}
+
 # Menu principal
 function Menu {
     Clear-Host
@@ -394,6 +408,9 @@ function Menu {
     # Mostrar informações do sistema
     Mostrar-Informacoes
 
+    # Verificar se o script foi chamado via irm e iex
+    $disableUpdateCheck = Check-InvokeExpression
+
     Write-Host "==============================="
     Write-Host -NoNewline "1 - "
     Write-Host "Configurar contas;" -ForegroundColor Yellow
@@ -401,8 +418,15 @@ function Menu {
     Write-Host "Adicionar ao domínio;" -ForegroundColor Yellow
     Write-Host -NoNewline "3 - "
     Write-Host "Remover do domínio;" -ForegroundColor Yellow
-    Write-Host -NoNewline "4 - "
-    Write-Host "Verificar atualizações;" -ForegroundColor Yellow
+    
+    if (-not $disableUpdateCheck) {
+        Write-Host -NoNewline "4 - "
+        Write-Host "Verificar atualizações;" -ForegroundColor Yellow
+    } else {
+        Write-Host -NoNewline "4 - "
+        Write-Host "Opção desativada;" -ForegroundColor Red
+    }
+    
     Write-Host -NoNewline "5 - "
     Write-Host "Sair." -ForegroundColor Yellow
     Write-Host ""
@@ -416,7 +440,7 @@ function Menu {
         '1' { Configurar-Contas }
         '2' { Adicionar-Ao-Dominio }
         '3' { Remover-Do-Dominio }
-        '4' { Atualizar-Script }
+        '4' { if (-not $disableUpdateCheck) { Atualizar-Script } else { Menu } }
         '5' { Write-Host "Saindo..." -ForegroundColor Yellow; Exit }
         default { Write-Host "Opção inválida. Tente novamente." -ForegroundColor Red; Start-Sleep -Seconds 1; Menu }
     }
