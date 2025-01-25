@@ -403,7 +403,7 @@ function Check-InvokeExpression {
         return $true
     }
 
-   if ($Host.Name -eq 'ConsoleHost') {
+   if ($MyInvocation.InvocationName -match "\.ps1$") {
         return $false
     }
 }
