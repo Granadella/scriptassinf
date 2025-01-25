@@ -403,7 +403,7 @@ function Check-InvokeExpression {
         return $true
     }
 
-   if ($MyInvocation.Line -eq $null) {
+   if ($Host.Name -eq 'ConsoleHost') {
         return $false
     }
 }
