@@ -378,13 +378,8 @@ function Atualizar-Script {
     }
 }
 
-param (
-    [switch]$fromWeb
-)
-
-# Função para verificar se o script foi chamado via irm e iex
 function Check-InvokeExpression {
-    if ($fromWeb) {
+    if ($env:FROM_WEB -eq "true") {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
         Write-Host "Pressione qualquer tecla para continuar..." -ForegroundColor Yellow
         [System.Console]::ReadKey($true) | Out-Null
