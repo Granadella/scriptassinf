@@ -394,11 +394,14 @@ function Atualizar-Script {
 }
 
 function Check-InvokeExpression {
-    if ($MyInvocation.InvocationName -eq "iex" -or $MyInvocation.InvocationName -eq "Invoke-RestMethod") {
+    if ($env:FROM_BATCH -eq "true") {
+        return $false
+    }
+
+    if ($MyInvocation.PipelineLength -gt 0) {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
         return $true
     }
-    return $false
 }
 
 # Menu principal
