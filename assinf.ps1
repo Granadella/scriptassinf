@@ -322,10 +322,14 @@ function Remover-Do-Dominio {
 
 function Atualizar-Script {
     # URL ou caminho do script atualizado
-    $ScriptUrl = "https://raw.githubusercontent.com/Granadella/scriptassinf/refs/heads/main/assinf.ps1"
+    $ScriptUrl = "https://raw.githubusercontent.com/Granadella/scriptassinf/main/assinf.ps1"
     
+    # Verificar se o script está sendo executado de um arquivo
     if ($PSScriptRoot) {
         $ScriptLocal = Join-Path -Path $PSScriptRoot -ChildPath "assinf.ps1"  # Caminho completo do script atual
+    } else {
+        Write-Host "Erro: O caminho do script local não pôde ser determinado." -ForegroundColor Red
+        return
     }
 
     try {
@@ -333,7 +337,7 @@ function Atualizar-Script {
 
         # Baixar o script atualizado para um arquivo temporário
         $TempFile = "$env:TEMP\script_atualizado.ps1"
-        Invoke-WebRequest -Uri $ScriptUrl -OutFile $TempFile -ErrorAction Stop
+        Invoke-WebRequest -Uri $ScriptUrl -OutFile $TempFile -UseBasicParsing -ErrorAction Stop
 
         # Comparar o hash (opcional para verificar diferenças)
         $CurrentHash = Get-FileHash -Path $ScriptLocal -Algorithm SHA256
@@ -344,8 +348,7 @@ function Atualizar-Script {
         } else {
             Write-Host "Atualização disponível. Aplicando..." -ForegroundColor Yellow
             Copy-Item -Path $TempFile -Destination $ScriptLocal -Force
-            Write-Host "Script atualizado com sucesso!" -BackgroundColor Green
-            Write-Host "Reinicie o script para aplicar as alterações." -ForegroundColor Cyan
+            Write-Host "Script atualizado com sucesso!" -ForegroundColor Green
         }
 
         # Remover o arquivo temporário
@@ -355,9 +358,20 @@ function Atualizar-Script {
         Write-Host "Erro ao verificar ou aplicar a atualização: $($_.Exception.Message)" -ForegroundColor Red
     }
 
-    Write-Host "Pressione qualquer tecla para voltar ao menu principal..." -ForegroundColor Yellow
-    [System.Console]::ReadKey($true) | Out-Null
-    Menu
+    # Perguntar ao usuário se deseja reiniciar o script
+    Write-Host "Deseja reiniciar o script agora? Pressione 'S' para SIM ou 'N' para NÃO." -ForegroundColor Yellow
+    $RestartChoice = [System.Console]::ReadKey($true).KeyChar
+
+    if ($RestartChoice -eq 'S') {
+        Write-Host "Reiniciando o script..." -ForegroundColor Green
+        Start-Process -FilePath "powershell.exe" -ArgumentList "-File `"$ScriptLocal`"" -NoNewWindow
+        # Finalizar o script atual
+        exit
+    } else {
+        Write-Host "Reinicialização adiada. Pressione qualquer tecla para voltar ao menu principal..." -ForegroundColor Yellow
+        [System.Console]::ReadKey($true) | Out-Null
+        Menu
+    }
 }
 
 # Menu principal
