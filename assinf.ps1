@@ -342,10 +342,6 @@ function Atualizar-Script {
         # Ler o conteúdo do arquivo baixado com a codificação correta
         $content = Get-Content -Path $TempFile -Raw -Encoding UTF8
 
-        # Reescrever o conteúdo com a codificação UTF-8 com BOM
-        $utf8BomEncoding = New-Object System.Text.UTF8Encoding($true)
-        [System.IO.File]::WriteAllText($ScriptLocal, $content, $utf8BomEncoding)
-
         # Comparar o hash (opcional para verificar diferenças)
         $CurrentHash = Get-FileHash -Path $ScriptLocal -Algorithm SHA256
         $NewHash = Get-FileHash -Path $TempFile -Algorithm SHA256
@@ -358,6 +354,8 @@ function Atualizar-Script {
         } else {
             Write-Host "Atualização disponível. Aplicando..." -ForegroundColor Yellow
             Copy-Item -Path $TempFile -Destination $ScriptLocal -Force
+            $utf8BomEncoding = New-Object System.Text.UTF8Encoding($true)
+            [System.IO.File]::WriteAllText($ScriptLocal, $content, $utf8BomEncoding)
             Write-Host "Script atualizado com sucesso!" -BackgroundColor Green
 
             # Perguntar ao usuário se deseja reiniciar o script
