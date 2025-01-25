@@ -333,6 +333,7 @@ function Atualizar-Script {
     }
 
     try {
+        Clear-Host
         Write-Host "Verificando por atualizações..." -ForegroundColor Cyan
 
         # Baixar o script atualizado para um arquivo temporário
@@ -351,7 +352,7 @@ function Atualizar-Script {
         } else {
             Write-Host "Atualização disponível. Aplicando..." -ForegroundColor Yellow
             Copy-Item -Path $TempFile -Destination $ScriptLocal -Force
-            Write-Host "Script atualizado com sucesso!" -ForegroundColor Green
+            Write-Host "Script atualizado com sucesso!" -BackgroundColor Green
 
             # Perguntar ao usuário se deseja reiniciar o script
             Write-Host "Deseja reiniciar o script agora? Pressione 'S' para SIM ou 'N' para NÃO." -ForegroundColor Yellow
