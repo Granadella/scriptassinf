@@ -322,8 +322,11 @@ function Remover-Do-Dominio {
 
 function Atualizar-Script {
     # URL ou caminho do script atualizado
-    $ScriptUrl = "https://drive.google.com/file/d/14QTzGqA0efFgBb932N79WSnHFVyekSiA/edit"
-    $ScriptLocal = $MyInvocation.MyCommand.Path  # Caminho do script atual
+    $ScriptUrl = "https://raw.githubusercontent.com/Granadella/scriptassinf/refs/heads/main/assinf.ps1"
+    
+    if ($PSScriptRoot) {
+        $ScriptLocal = Join-Path -Path $PSScriptRoot -ChildPath "assinf.ps1"  # Caminho completo do script atual
+    }
 
     try {
         Write-Host "Verificando por atualizações..." -ForegroundColor Cyan
