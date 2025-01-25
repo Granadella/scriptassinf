@@ -349,6 +349,8 @@ function Atualizar-Script {
         $TempFile = "$env:TEMP\script_atualizado.ps1"
         Invoke-WebRequest -Uri $ScriptUrl -OutFile $TempFile -UseBasicParsing -ErrorAction Stop
 
+        Reescrever-ComoUtf8Bom -FilePath $TempFile
+
         # Comparar o hash (opcional para verificar diferenças)
         $CurrentHash = Get-FileHash -Path $ScriptLocal -Algorithm SHA256
         $NewHash = Get-FileHash -Path $TempFile -Algorithm SHA256
@@ -362,8 +364,7 @@ function Atualizar-Script {
             Write-Host "Atualização disponível. Aplicando..." -ForegroundColor Yellow
             Copy-Item -Path $TempFile -Destination $ScriptLocal -Force
             Write-Host "Script atualizado com sucesso!" -BackgroundColor Green
-
-            # Reescrever o script local com a codificação UTF-8 com BOM
+            
             Reescrever-ComoUtf8Bom -FilePath $ScriptLocal
 
             # Perguntar ao usuário se deseja reiniciar o script
