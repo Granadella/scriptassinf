@@ -319,6 +319,16 @@ function Remover-Do-Dominio {
     }
 }
 
+# Função para reescrever o arquivo com a codificação UTF-8 com BOM
+function Reescrever-ComoUtf8Bom {
+    param (
+        [string]$FilePath
+    )
+    $content = Get-Content -Path $FilePath -Raw -Encoding UTF8
+    $utf8BomEncoding = New-Object System.Text.UTF8Encoding($true)
+    [System.IO.File]::WriteAllText($FilePath, $content, $utf8BomEncoding)
+}
+
 function Atualizar-Script {
     # URL do script atualizado
     $ScriptUrl = "https://raw.githubusercontent.com/Granadella/scriptassinf/main/assinf.ps1"
@@ -339,8 +349,8 @@ function Atualizar-Script {
         $TempFile = "$env:TEMP\script_atualizado.ps1"
         Invoke-WebRequest -Uri $ScriptUrl -OutFile $TempFile -UseBasicParsing -ErrorAction Stop
 
-        # Ler o conteúdo do arquivo baixado com a codificação correta
-        $content = Get-Content -Path $TempFile -Raw -Encoding UTF8
+        # Reescrever o arquivo temporário com a codificação UTF-8 com BOM
+        Reescrever-ComoUtf8Bom -FilePath $TempFile
 
         # Comparar o hash (opcional para verificar diferenças)
         $CurrentHash = Get-FileHash -Path $ScriptLocal -Algorithm SHA256
@@ -354,9 +364,10 @@ function Atualizar-Script {
         } else {
             Write-Host "Atualização disponível. Aplicando..." -ForegroundColor Yellow
             Copy-Item -Path $TempFile -Destination $ScriptLocal -Force
-            $utf8BomEncoding = New-Object System.Text.UTF8Encoding($true)
-            [System.IO.File]::WriteAllText($ScriptLocal, $content, $utf8BomEncoding)
             Write-Host "Script atualizado com sucesso!" -BackgroundColor Green
+
+            # Reescrever o script local com a codificação UTF-8 com BOM
+            Reescrever-ComoUtf8Bom -FilePath $ScriptLocal
 
             # Perguntar ao usuário se deseja reiniciar o script
             Write-Host "Deseja reiniciar o script agora? Pressione 'S' para SIM ou 'N' para NÃO." -ForegroundColor Yellow
