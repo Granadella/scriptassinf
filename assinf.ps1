@@ -1,6 +1,6 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Função para obter o Domínio/Grupo de Trabalhotst
+# Função para obter o Domínio/Grupo de Trabalho
 function Get-DomainOrWorkgroup {
     try {
         $computerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
