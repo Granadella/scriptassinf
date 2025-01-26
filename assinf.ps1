@@ -34,7 +34,7 @@ function Mostrar-Informacoes {
 
         # Exibir o nome atual do usuário
         Write-Host -NoNewline "Nome atual do usuário: "
-        Write-Host $currentUsername -ForegroundColor Blue
+        Write-Host $currentUsername -BackgroundColor Blue
 
         # Exibir a frase com "Sim" em verde ou "Não" em vermelho
         Write-Host -NoNewline "Conta Supervisor configurada: "
