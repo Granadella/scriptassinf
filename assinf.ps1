@@ -410,13 +410,13 @@ function Mudar-NomeUsuario {
         Rename-LocalUser -Name $currentUsername -NewName $NovoNome
         Write-Host "Nome de usuário alterado com sucesso para: $NovoNome" -BackgroundColor DarkGreen
 
-        $domain = (Get-CimInstance -ClassName Win32_ComputerSystem).Domain
-        if ($domain -ne $env:COMPUTERNAME) {
+        $computerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
+        if ($computerSystem.PartOfDomain) {
             Write-Host "Foi detectado que você está em um domínio. As mudanças do nome funcionam de forma diferente." -ForegroundColor Yellow
             Write-Host "Após o logout, selecione 'Outro usuário' e digite '.\$NovoNome' para fazer login com o novo nome de usuário." -BackgroundColor DarkRed
         }
 
-        Write-Host "Você será desconectado em 10 segundos para que as alterações sejam aplicadas." -ForegroundColor Yellow
+        Write-Host "Você será desconectado em 10 segundos para que as alterações sejam aplicadas." -BackgroundColor Black -ForegroundColor Yellow
         Start-Sleep -Seconds 10
         shutdown /l
     } catch {
