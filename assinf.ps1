@@ -30,7 +30,7 @@ function Mostrar-Informacoes {
 
         # Exibir o nome do computador
         Write-Host -NoNewline "Nome atual do computador: "
-        Write-Host $ComputerName -BackgroundColor Cyan
+        Write-Host $ComputerName -BackgroundColor DarkCyan
 
         # Exibir o nome atual do usuário
         Write-Host -NoNewline "Nome atual do usuário: "
