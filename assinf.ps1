@@ -55,6 +55,7 @@ function Mostrar-Informacoes {
 # Função para configurar as contas
 function Configurar-Contas {
     try {
+        Clear-Host
         Write-Host "Configurando a conta de Administrador..."
 
         # Ativar a conta de Administrador e configurar senha
@@ -66,6 +67,7 @@ function Configurar-Contas {
         Start-Sleep -Seconds 1
 
         # Criar a conta de Supervisor
+        Clear-Host
         Write-Host "Criando a conta de Supervisor..."
         net user Supervisor suporte1000 /add | Out-Null
         Set-LocalUser -Name "Supervisor" -PasswordNeverExpires $true | Out-Null
