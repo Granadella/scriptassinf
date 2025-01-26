@@ -24,12 +24,18 @@ function Get-DomainOrWorkgroup {
 function Mostrar-Informacoes {
     try {
         $ComputerName = (Get-CimInstance -ClassName Win32_ComputerSystem).Name
+        $currentUsernameFull = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+        $currentUsername = $currentUsernameFull.Split('\')[-1]
         $SupervisorConfigured = if (Get-LocalUser -Name "Supervisor" -ErrorAction SilentlyContinue) { "SIM" } else { "NÃO" }
-        
-        # Exibir a frase "Nome atual do computador: " e o nome do computador em ciano
+
+        # Exibir o nome do computador
         Write-Host -NoNewline "Nome atual do computador: "
         Write-Host $ComputerName -ForegroundColor Cyan
-        
+
+        # Exibir o nome atual do usuário
+        Write-Host -NoNewline "Nome atual do usuário: "
+        Write-Host $currentUsername -ForegroundColor Blue
+
         # Exibir a frase com "Sim" em verde ou "Não" em vermelho
         Write-Host -NoNewline "Conta Supervisor configurada: "
         if ($SupervisorConfigured -eq "SIM") {
@@ -39,7 +45,7 @@ function Mostrar-Informacoes {
         }
 
         Write-Host (Get-DomainOrWorkgroup)
-        
+
         Start-Sleep -Seconds 3
     } catch {
         Write-Host "Erro ao mostrar informações: $($_.Exception.Message)" -ForegroundColor Red
@@ -393,6 +399,41 @@ function Atualizar-Script {
     }
 }
 
+function Mudar-NomeUsuario {
+    param (
+        [string]$NovoNome
+    )
+    try {
+        $currentUsernameFull = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+        $currentUsername = $currentUsernameFull.Split('\')[-1]
+
+        Rename-LocalUser -Name $currentUsername -NewName $NovoNome
+        Write-Host "Nome de usuário alterado com sucesso para: $NovoNome" -BackgroundColor DarkGreen
+
+        $domain = (Get-CimInstance -ClassName Win32_ComputerSystem).Domain
+        if ($domain -ne $env:COMPUTERNAME) {
+            Write-Host "Foi detectado que você está em um domínio. As mudanças do nome funcionam de forma diferente." -ForegroundColor Yellow
+            Write-Host "Após o logout, selecione 'Outro usuário' e digite '.\$NovoNome' para fazer login com o novo nome de usuário." -BackgroundColor DarkRed
+        }
+
+        Write-Host "Você será desconectado em 10 segundos para que as alterações sejam aplicadas." -ForegroundColor Yellow
+        Start-Sleep -Seconds 10
+        shutdown /l
+    } catch {
+        Write-Host "Erro ao mudar o nome de usuário: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+function Solicitar-NovoNomeUsuario {
+    Clear-Host
+    Write-Host "Digite o novo nome de usuário:"
+    $NovoNome = Read-Host
+    Mudar-NomeUsuario -NovoNome $NovoNome
+    Write-Host "Pressione qualquer tecla para voltar ao menu principal..." -ForegroundColor Yellow
+    [System.Console]::ReadKey($true) | Out-Null
+    Menu
+}
+
 function Check-InvokeExpression {
     if ($env:IRMIEX -eq "true") {
         Write-Host "Aviso: O script foi chamado via irm e iex. A função de verificar atualizações não estará disponível." -BackgroundColor DarkRed
@@ -413,7 +454,7 @@ function Menu {
     Write-Host "         MENU PRINCIPAL        " -ForegroundColor Yellow
     Write-Host "==============================="
     Write-Host ""
-    
+
     # Mostrar informações do sistema
     Mostrar-Informacoes
 
@@ -427,30 +468,51 @@ function Menu {
     Write-Host "Adicionar ao domínio;" -ForegroundColor Yellow
     Write-Host -NoNewline "3 - "
     Write-Host "Remover do domínio;" -ForegroundColor Yellow
-    
+    Write-Host -NoNewline "4 - "
+    Write-Host "Mudar nome de usuário;" -ForegroundColor Yellow
+
     if (-not $disableUpdateCheck) {
-        Write-Host -NoNewline "4 - "
+        Write-Host -NoNewline "5 - "
         Write-Host "Verificar atualizações;" -ForegroundColor Yellow
     } else {
-        Write-Host -NoNewline "4 - "
+        Write-Host -NoNewline "5 - "
         Write-Host "Opção desativada;" -ForegroundColor Red
     }
-    
-    Write-Host -NoNewline "5 - "
+
+    Write-Host -NoNewline "6 - "
     Write-Host "Sair." -ForegroundColor Yellow
     Write-Host ""
 
-    Write-Host "Escolha uma opção (Pressione 1, 2, 3, 4 ou 5):"
-    
+    Write-Host -NoNewline "Escolha uma opção (Pressione " -ForegroundColor White
+    Write-Host -NoNewline "1" -ForegroundColor Yellow
+    Write-Host -NoNewline ", " -ForegroundColor White
+    Write-Host -NoNewline "2" -ForegroundColor Yellow
+    Write-Host -NoNewline ", " -ForegroundColor White
+    Write-Host -NoNewline "3" -ForegroundColor Yellow
+    Write-Host -NoNewline ", " -ForegroundColor White
+    Write-Host -NoNewline "4" -ForegroundColor Yellow
+    Write-Host -NoNewline ", " -ForegroundColor White
+
+    if (-not $disableUpdateCheck) {
+        Write-Host -NoNewline "5" -ForegroundColor Yellow
+    } else {
+        Write-Host -NoNewline "5" -ForegroundColor Red
+    }
+
+    Write-Host -NoNewline " ou " -ForegroundColor White
+    Write-Host -NoNewline "6" -ForegroundColor Yellow
+    Write-Host "):" -ForegroundColor White
+
     # Usar ReadKey para capturar a tecla pressionada
     $Escolha = [System.Console]::ReadKey($true).KeyChar
-    
+
     switch ($Escolha) {
         '1' { Configurar-Contas }
         '2' { Adicionar-Ao-Dominio }
         '3' { Remover-Do-Dominio }
-        '4' { if (-not $disableUpdateCheck) { Atualizar-Script } else { Clear-Host; Write-Host "Opção desativada." -ForegroundColor Red; Start-Sleep -Seconds 1; Menu } }
-        '5' { Write-Host "Saindo..." -ForegroundColor Yellow; Exit }
+        '4' { Solicitar-NovoNomeUsuario }
+        '5' { if (-not $disableUpdateCheck) { Atualizar-Script } else { Clear-Host; Write-Host "Opção desativada." -ForegroundColor Red; Start-Sleep -Seconds 1; Menu } }
+        '6' { Write-Host "Saindo..." -ForegroundColor Yellow; Exit }
         default { Write-Host "Opção inválida. Tente novamente." -ForegroundColor Red; Start-Sleep -Seconds 1; Menu }
     }
 }
